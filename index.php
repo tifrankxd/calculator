@@ -8,12 +8,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
     :root {
-        --primary-color: #8A2BE2;
-        --secondary-color: #50C878;
+        --primary-color: #39FF14;
+        --secondary-color: #FFFFFF;
         --bg-dark: #0a0a0a;
         --text-light: #ffffff;
         --card-bg: #1a1a1a;
-        --neon-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+        --neon-shadow: 0 0 20px rgba(57, 255, 20, 0.5);
+        --neon-text: 0 0 10px rgba(57, 255, 20, 0.8);
     }
 
     * {
@@ -60,36 +61,27 @@
         margin: 2rem 0;
         position: relative;
         text-transform: uppercase;
-        color: var(--text-light);
+        color: var(--primary-color);
         text-shadow:
-            2px 2px var(--primary-color),
-            -2px -2px var(--secondary-color);
-        animation: glitch 2s infinite;
+            0 0 5px var(--primary-color),
+            0 0 10px var(--primary-color),
+            0 0 20px var(--primary-color);
+        animation: neonPulse 1.5s infinite alternate;
     }
 
-    @keyframes glitch {
-        0% {
-            transform: translate(0);
+    @keyframes neonPulse {
+        from {
+            text-shadow:
+                0 0 5px var(--primary-color),
+                0 0 10px var(--primary-color),
+                0 0 20px var(--primary-color);
         }
 
-        20% {
-            transform: translate(-2px, 2px);
-        }
-
-        40% {
-            transform: translate(-2px, -2px);
-        }
-
-        60% {
-            transform: translate(2px, 2px);
-        }
-
-        80% {
-            transform: translate(2px, -2px);
-        }
-
-        100% {
-            transform: translate(0);
+        to {
+            text-shadow:
+                0 0 5px var(--primary-color),
+                0 0 20px var(--primary-color),
+                0 0 40px var(--primary-color);
         }
     }
 
@@ -109,7 +101,9 @@
         transition: all 0.5s ease;
         min-height: 250px;
         cursor: pointer;
-        border: 4px solid transparent;
+        border: 2px solid var(--primary-color);
+        box-shadow: 0 0 15px var(--primary-color);
+        animation: borderGlow 2s infinite alternate;
         background-clip: padding-box;
     }
 
@@ -289,31 +283,128 @@
         width: 100%;
         height: 100%;
         pointer-events: none;
-        z-index: -1;
+        z-index: 1;
     }
 
     .particle {
         position: absolute;
         width: 2px;
         height: 2px;
-        background: var(--primary-color);
+        background: radial-gradient(circle,
+                rgba(138, 43, 226, 0.8),
+                transparent 70%);
+        width: 4px;
+        height: 4px;
         border-radius: 50%;
-        animation: float 20s infinite linear;
+        animation: float 15s infinite linear;
+        opacity: 0.6;
     }
 
     @keyframes float {
         0% {
             transform: translateY(0) translateX(0);
+            opacity: 0;
+        }
+
+        10% {
+            opacity: 0.6;
         }
 
         100% {
             transform: translateY(-100vh) translateX(100vw);
+            opacity: 0;
         }
+    }
+
+    /* Medusa eléctrica */
+    .electric-jellyfish {
+        position: fixed;
+        width: 50px;
+        height: 50px;
+        pointer-events: none;
+        z-index: 9999;
+        transition: all 0.1s ease;
+        mix-blend-mode: screen;
+    }
+
+    .jellyfish-core {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: radial-gradient(circle at 30% 30%,
+                rgba(138, 43, 226, 0.8),
+                rgba(80, 200, 120, 0.4));
+        filter: blur(5px);
+        animation: pulse 2s infinite;
+    }
+
+    .jellyfish-tentacles {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+
+    .tentacle {
+        position: absolute;
+        width: 2px;
+        height: 30px;
+        background: linear-gradient(to bottom,
+                rgba(138, 43, 226, 0.8),
+                transparent);
+        transform-origin: top center;
+        animation: tentacleWave 3s infinite;
+    }
+
+    @keyframes tentacleWave {
+
+        0%,
+        100% {
+            transform: rotate(0deg);
+        }
+
+        25% {
+            transform: rotate(15deg);
+        }
+
+        75% {
+            transform: rotate(-15deg);
+        }
+    }
+
+    .calculator-description {
+        color: var(--secondary-color);
+        margin-top: 1rem;
+        font-size: 0.9rem;
+        text-align: center;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.3s ease;
+    }
+
+    .calculator-card:hover .calculator-description {
+        opacity: 1;
+        transform: translateY(0);
     }
     </style>
 </head>
 
 <body>
+    <!-- Medusa eléctrica -->
+    <div class="electric-jellyfish" id="jellyfish">
+        <div class="jellyfish-core"></div>
+        <div class="jellyfish-tentacles">
+            <div class="tentacle" style="transform: rotate(0deg)"></div>
+            <div class="tentacle" style="transform: rotate(45deg)"></div>
+            <div class="tentacle" style="transform: rotate(90deg)"></div>
+            <div class="tentacle" style="transform: rotate(135deg)"></div>
+            <div class="tentacle" style="transform: rotate(180deg)"></div>
+            <div class="tentacle" style="transform: rotate(225deg)"></div>
+            <div class="tentacle" style="transform: rotate(270deg)"></div>
+            <div class="tentacle" style="transform: rotate(315deg)"></div>
+        </div>
+    </div>
+
     <!-- Partículas de fondo -->
     <div class="particles" id="particles"></div>
 
@@ -326,24 +417,51 @@
     </div>
 
     <div class="container">
+        <div class="setup-instructions">
+            <h2>Instrucciones de Instalación</h2>
+            <div class="instruction-card">
+                <h3>React Calculator</h3>
+                <ol>
+                    <li>Asegúrate de tener Node.js instalado</li>
+                    <li>Abre una terminal y navega a la carpeta del proyecto</li>
+                    <li>Ejecuta: <code>cd calculadora-react</code></li>
+                    <li>Instala las dependencias: <code>npm install</code></li>
+                    <li>Inicia el servidor: <code>npm start</code></li>
+                    <li>La aplicación se abrirá en: <code>http://localhost:3000</code></li>
+                </ol>
+            </div>
+        </div>
+
         <h1>Calculadoras</h1>
         <div class="nav">
             <div class="calculator-card" onclick="loadCalculator('vanilla-js/index.html')">
                 <div class="card-content">
                     <i class="calculator-icon fab fa-js"></i>
                     <div class="calculator-title">JavaScript Vanilla</div>
+                    <div class="calculator-description">
+                        Calculadora ligera y rápida implementada con JavaScript puro.
+                        Perfecta para operaciones básicas con una interfaz moderna y responsive.
+                    </div>
                 </div>
             </div>
             <div class="calculator-card" onclick="loadCalculator('php/index.php')">
                 <div class="card-content">
                     <i class="calculator-icon fab fa-php"></i>
                     <div class="calculator-title">PHP Calculator</div>
+                    <div class="calculator-description">
+                        Procesamiento del lado del servidor para cálculos precisos.
+                        Ideal para operaciones complejas y manejo de datos persistentes.
+                    </div>
                 </div>
             </div>
             <div class="calculator-card" onclick="loadCalculator('http://localhost:3000')">
                 <div class="card-content">
                     <i class="calculator-icon fab fa-react"></i>
                     <div class="calculator-title">React Calculator</div>
+                    <div class="calculator-description">
+                        Implementación moderna con React y estados dinámicos.
+                        Interfaz fluida y componentes reutilizables.
+                    </div>
                 </div>
             </div>
         </div>
@@ -353,14 +471,35 @@
     // Crear partículas
     function createParticles() {
         const container = document.getElementById('particles');
-        for (let i = 0; i < 50; i++) {
+        for (let i = 0; i < 100; i++) {
             const particle = document.createElement('div');
             particle.className = 'particle';
             particle.style.left = Math.random() * 100 + 'vw';
-            particle.style.animationDelay = Math.random() * 20 + 's';
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            particle.style.opacity = Math.random() * 0.6;
+            particle.style.transform = `scale(${Math.random() * 0.8 + 0.2})`;
             container.appendChild(particle);
         }
     }
+
+    // Seguimiento del cursor con la medusa
+    document.addEventListener('mousemove', (e) => {
+        const jellyfish = document.getElementById('jellyfish');
+        const x = e.clientX - 25; // Centrar horizontalmente
+        const y = e.clientY - 25; // Centrar verticalmente
+
+        // Aplicar efecto de suavizado
+        requestAnimationFrame(() => {
+            jellyfish.style.left = x + 'px';
+            jellyfish.style.top = y + 'px';
+        });
+
+        // Rotar tentáculos según la dirección del movimiento
+        const dx = e.movementX;
+        const dy = e.movementY;
+        const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+        jellyfish.style.transform = `rotate(${angle}deg)`;
+    });
 
     // Función de carga con AJAX
     function loadCalculator(url) {
